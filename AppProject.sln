@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppProject.IService", "AppP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppProject.Serilog", "AppProject.Serilog\AppProject.Serilog.csproj", "{0FECF733-16FB-493D-A775-B0FFD2E609EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppProject.Repository.Test", "AppProject.Repository.Test\AppProject.Repository.Test.csproj", "{8AEC5C91-AC1C-4D86-9586-258A2EA18797}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{0FECF733-16FB-493D-A775-B0FFD2E609EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FECF733-16FB-493D-A775-B0FFD2E609EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FECF733-16FB-493D-A775-B0FFD2E609EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AEC5C91-AC1C-4D86-9586-258A2EA18797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AEC5C91-AC1C-4D86-9586-258A2EA18797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AEC5C91-AC1C-4D86-9586-258A2EA18797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AEC5C91-AC1C-4D86-9586-258A2EA18797}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

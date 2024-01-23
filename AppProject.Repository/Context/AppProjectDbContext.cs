@@ -1,5 +1,7 @@
 using AppProject.Model;
+using AppProject.Repository.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace AppProject.Repository.Context;
 
@@ -19,5 +21,10 @@ public class AppProjectDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TestModel>();
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new QueryCommandInterceptor());
     }
 }

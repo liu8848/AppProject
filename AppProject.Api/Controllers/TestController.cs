@@ -20,4 +20,11 @@ public class TestController:ControllerBase
     {
         return await _repository.GetAsync(t => true);
     }
+
+    [HttpPost("/insert")]
+    public async Task<int> InsertAsync([FromBody] TestModel entity)
+    {
+        await _repository.InsertAsync(entity);
+        return 1;
+    }
 }

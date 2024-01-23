@@ -1,6 +1,9 @@
+using AppProject.Common.Helpers;
+using AppProject.Serilog;
 using AppProject.Serilog.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
 
 namespace AppProject.Extensions.ServiceExtensions;
 
@@ -14,7 +17,9 @@ public static class SerilogSetup
         if (host == null) throw new ArgumentNullException(nameof(host));
 
         LoggerConfiguration loggerConfiguration = new LoggerConfiguration()
-            // .ReadFrom.Configuration(AppSettings.Configuration)
+            .ReadFrom.Configuration(AppSettings.Configuration)
+            // .Enrich.WithInfo()
+            // .MinimumLevel.Override("Microsoft.EntityFrameworkCore",LogEventLevel.Information)
             .Enrich.FromLogContext()
             .WriteToConsole();
         
@@ -22,5 +27,6 @@ public static class SerilogSetup
 
         host.UseSerilog();
         return host;
+        
     }
 }

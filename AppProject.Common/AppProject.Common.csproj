@@ -23,6 +23,9 @@
         <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions">
             <HintPath>..\..\..\..\..\..\usr\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.1\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
         </Reference>
+        <Reference Include="Microsoft.EntityFrameworkCore.Relational">
+          <HintPath>..\..\..\..\.nuget\packages\microsoft.entityframeworkcore.relational\7.0.2\lib\net6.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

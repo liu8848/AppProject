@@ -5,6 +5,7 @@ using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Events;
 
 namespace AppProject.Extensions.ServiceExtensions;
 
@@ -22,6 +23,7 @@ public class AutofacModuleRegister : Module
                 new DbContextOptionsBuilder()
                     .UseMySql(connectionString,
                         MySqlServerVersion.LatestSupportedServerVersion)
+                    // .LogTo(Log.Logger.Information)
                     .Options)
             .SingleInstance();
 

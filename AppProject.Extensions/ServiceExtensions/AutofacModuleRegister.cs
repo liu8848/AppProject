@@ -1,9 +1,11 @@
 using System.Reflection;
 using AppProject.Common;
 using AppProject.IService.Base;
+using AppProject.IService.Identities;
 using AppProject.Repository.Base;
 using AppProject.Repository.Context;
 using AppProject.Services.Base;
+using AppProject.Services.Identities;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,5 +56,8 @@ public class AutofacModuleRegister : Module
             .PropertiesAutowired();
 
         #endregion
+
+        // builder.RegisterType(typeof(IdentityService))
+        //     .As(typeof(IIdentityService)).InstancePerDependency();
     }
 }

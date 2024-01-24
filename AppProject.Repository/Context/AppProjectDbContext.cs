@@ -1,12 +1,14 @@
 using AppProject.Model;
+using AppProject.Model.Entities.Identities;
 using AppProject.Model.Entities.User;
 using AppProject.Repository.Interceptors;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace AppProject.Repository.Context;
 
-public class AppProjectDbContext : DbContext
+public class AppProjectDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppProjectDbContext(DbContextOptions options) : base(options)
     {
@@ -15,13 +17,13 @@ public class AppProjectDbContext : DbContext
     #region 实体映射表
 
     public DbSet<TestModel> TestModels => Set<TestModel>();
-    public DbSet<User> Users => Set<User>();
-
+    
     #endregion
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<TestModel>();
         modelBuilder.Entity<User>();
     }

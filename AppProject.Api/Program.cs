@@ -1,9 +1,14 @@
 using AppProject.Common.Core;
 using AppProject.Common.Helpers;
 using AppProject.Extensions.ServiceExtensions;
+using AppProject.IService.Identities;
+using AppProject.Model.Entities.Identities;
 using AppProject.Repository;
+using AppProject.Repository.Context;
+using AppProject.Services.Identities;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +35,20 @@ builder.ConfigureApplication();
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
 
 builder.Host.AddSerilogSetup();
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
+    {
+        o.Password.RequireDigit = true;
+        o.Password.RequiredLength = 6;
+        o.Password.RequireLowercase = true;
+        o.Password.RequireUppercase = false;
+        o.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<AppProjectDbContext>()
+    .AddDefaultTokenProviders()
+    .AddUserManager<UserManager<ApplicationUser>>();
+builder.Services.AddTransient<IIdentityService, IdentityService>();
+
 
 #endregion
 

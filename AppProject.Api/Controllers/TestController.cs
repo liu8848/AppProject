@@ -1,5 +1,6 @@
+using System.Linq.Expressions;
+using AppProject.IService.Test;
 using AppProject.Model;
-using AppProject.Repository.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppProject.Api.Controllers;
@@ -7,24 +8,28 @@ namespace AppProject.Api.Controllers;
 [Route("test")]
 public class TestController:ControllerBase
 {
-    private readonly IBaseRepository<TestModel> _repository;
+    private readonly ITestModelService _testModelService;
 
-    public TestController(IBaseRepository<TestModel> repository)
+    public TestController(ITestModelService testModelService)
     {
-        _repository = repository??throw new ArgumentNullException($"{typeof(IBaseRepository<TestModel>).FullName}");
+        _testModelService = testModelService;
     }
 
+
+    [HttpGet("{id}")]
+    public async Task<TestModel?> GetById([FromRoute]int id)
+    {
+        return await _testModelService.GetAsync(t => t.id == id);
+    }
 
     [HttpGet]
-    public async Task<TestModel> GetAsync()
+    public async Task<List<TestModel>> GetListByQuery([FromQuery] int id, [FromQuery] string desc)
     {
-        return await _repository.GetAsync(t => true);
+        return await _testModelService.GetListAsync(t =>
+            (t.id == id || id == 0) &&
+            (t.Desc.Contains(desc) || string.IsNullOrEmpty(desc)));
     }
-
-    [HttpPost("/insert")]
-    public async Task<int> InsertAsync([FromBody] TestModel entity)
-    {
-        await _repository.InsertAsync(entity);
-        return 1;
-    }
+    
+    
+    
 }

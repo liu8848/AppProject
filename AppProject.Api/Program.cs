@@ -1,6 +1,7 @@
 using AppProject.Common.Core;
 using AppProject.Common.Helpers;
 using AppProject.Extensions.ServiceExtensions;
+using AppProject.Repository;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 
@@ -46,6 +47,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+await app.MigrateDatabase();
 
 app.UseHttpsRedirection();
 

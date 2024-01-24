@@ -1,11 +1,13 @@
+using System.Reflection;
 using AppProject.Common;
+using AppProject.IService.Base;
 using AppProject.Repository.Base;
 using AppProject.Repository.Context;
+using AppProject.Services.Base;
 using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Serilog;
-using Serilog.Events;
+using Module = Autofac.Module;
 
 namespace AppProject.Extensions.ServiceExtensions;
 
@@ -42,6 +44,14 @@ public class AutofacModuleRegister : Module
 
         //注册仓储
         builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IBaseRepository<>)).InstancePerDependency();
+        builder.RegisterGeneric(typeof(BaseService<>)).As(typeof(IBaseService<>)).InstancePerDependency();
+
+        // 获取 Service.dll 程序集服务，并注册
+        var assemblysServices = Assembly.LoadFrom(servicesDllFile);
+        builder.RegisterAssemblyTypes(assemblysServices)
+            .AsImplementedInterfaces()
+            .InstancePerDependency()
+            .PropertiesAutowired();
 
         #endregion
     }

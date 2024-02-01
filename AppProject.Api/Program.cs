@@ -36,26 +36,15 @@ builder.Services.AddSingleton(new AppSettings(builder.Configuration));
 
 builder.Host.AddSerilogSetup();
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o =>
-    {
-        o.Password.RequireDigit = true;
-        o.Password.RequiredLength = 6;
-        o.Password.RequireLowercase = true;
-        o.Password.RequireUppercase = false;
-        o.Password.RequireNonAlphanumeric = false;
-    })
-    .AddEntityFrameworkStores<AppProjectDbContext>()
-    .AddDefaultTokenProviders()
-    .AddUserManager<UserManager<ApplicationUser>>();
-builder.Services.AddTransient<IIdentityService, IdentityService>();
-
-
-#endregion
+builder.Services.AddIdentityExtension();
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+#endregion
+
 
 
 

@@ -16,4 +16,8 @@
         <ProjectReference Include="..\AppProject.Model\AppProject.Model.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
+
 </Project>

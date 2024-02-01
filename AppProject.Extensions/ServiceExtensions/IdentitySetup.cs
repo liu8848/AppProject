@@ -1,0 +1,63 @@
+using System.Text;
+using AppProject.Common;
+using AppProject.IService.Identities;
+using AppProject.Model.Entities.Identities;
+using AppProject.Repository.Context;
+using AppProject.Services.Identities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+
+namespace AppProject.Extensions.ServiceExtensions;
+
+public static class IdentitySetup
+{
+    public static IServiceCollection AddIdentityExtension(this IServiceCollection services)
+    {
+        services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                //密码设置要求
+                options.Password.RequireDigit = true; //数字必须
+                options.Password.RequiredLength = 6; //密码长度大于6
+                options.Password.RequireLowercase = false; //小写字母非必须
+                options.Password.RequireUppercase = false; //大写字母非必须
+                options.Password.RequireNonAlphanumeric = false; //特殊字符非必须
+            })
+            .AddEntityFrameworkStores<AppProjectDbContext>()
+            .AddDefaultTokenProviders()
+            .AddUserManager<UserManager<ApplicationUser>>()
+            .AddRoleManager<RoleManager<ApplicationRole>>();
+        
+        //注入Identity服务
+        services.AddTransient<IIdentityService, IdentityService>();
+
+        //配置认证信息
+        var configuration = App.Configuration;
+        services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    
+                    ValidIssuer = configuration.GetSection("JwtSettings")["validIssuer"],
+                    ValidAudience = configuration.GetSection("JwtSettings")["validAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            configuration.GetSection("JwtSettings")["SecretKey"]??
+                            "AppProjectApiSecretKey")
+                        )
+                };
+            });
+
+        return services;
+    }
+}

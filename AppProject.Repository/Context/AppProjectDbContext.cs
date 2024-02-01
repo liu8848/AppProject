@@ -1,14 +1,12 @@
 using AppProject.Model;
 using AppProject.Model.Entities.Identities;
-using AppProject.Model.Entities.User;
 using AppProject.Repository.Interceptors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace AppProject.Repository.Context;
 
-public class AppProjectDbContext : IdentityDbContext<ApplicationUser>
+public class AppProjectDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,long>
 {
     public AppProjectDbContext(DbContextOptions options) : base(options)
     {
@@ -24,8 +22,6 @@ public class AppProjectDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<TestModel>();
-        modelBuilder.Entity<User>();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

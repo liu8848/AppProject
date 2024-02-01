@@ -40,7 +40,7 @@ public class LogContextExtension:IDisposable
         string str = string.Empty;
         foreach (DbParameter para in paras)
         {
-            str += $"{para.ParameterName}:{para.Value}    ";
+            str += $"{para.ParameterName}:{para.Value}\r\n";
         }
 
         return str;

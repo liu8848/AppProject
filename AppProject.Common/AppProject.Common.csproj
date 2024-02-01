@@ -7,9 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Serilog" Version="3.1.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
         <PackageReference Include="Serilog.Expressions" Version="4.0.0" />
@@ -26,6 +29,10 @@
         <Reference Include="Microsoft.EntityFrameworkCore.Relational">
           <HintPath>..\..\..\..\.nuget\packages\microsoft.entityframeworkcore.relational\7.0.2\lib\net6.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\RedisCacheHelper\" />
     </ItemGroup>
 
 </Project>

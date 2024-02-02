@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace AppProject.Common;
 
@@ -42,7 +43,7 @@ public class App
     /// <summary>
     ///     优先使用App.GetService()手动获取服务
     /// </summary>
-    public static IServiceProvider? RootService => IsRun || IsBuild ? InternalApp.RootServices : null;
+    public static IServiceProvider RootService => IsRun || IsBuild ? InternalApp.RootServices : null;
 
 
     /// <summary>
@@ -80,17 +81,44 @@ public class App
         return serviceProvider;
     }
 
+    /// <summary>获取请求生存周期的服务</summary>
+    /// <param name="type"></param>
+    /// <param name="serviceProvider"></param>
+    /// <param name="mustBuild"></param>
+    /// <returns></returns>
+    public static TService GetService<TService>(bool mustBuild = true)
+        where TService : class => App.GetService(typeof(TService), null, mustBuild) as TService;
+    public static TService? GetService<TService>(IServiceProvider serviceProvider, bool mustBuild = true)
+        where TService : class => (serviceProvider ?? App.GetServiceProvider(typeof(TService), mustBuild, false))
+        ?.GetService<TService>();
+    public static object? GetService(Type type, IServiceProvider serviceProvider = null, bool mustBuild = true) =>
+        (serviceProvider ?? App.GetServiceProvider(type, mustBuild, false))?.GetService(type);
+
     #endregion
 
 
     #region Options获取配置选项类
 
-    public static TOptions? GetConfig<TOptions>()
+    /// <summary>
+    /// 获取配置
+    /// </summary>
+    /// <typeparam name="TOptions">强类型选项类</typeparam>
+    /// <returns>TOptions</returns>
+    public static TOptions GetConfig<TOptions>()
+    where TOptions:class,IConfigurableOptions
     {
         var instance = Configuration
             .GetSection(ConfigurableOptions.GetConfigurationPath(typeof(TOptions)))
             .Get<TOptions>();
         return instance;
+    }
+
+    public static TOptions? GetOption<TOptions>(IServiceProvider serviceProvider = null)
+        where TOptions : class, new()
+    {
+        IOptions<TOptions>? service = GetService<IOptions<TOptions>>(serviceProvider ??
+                                                                     App.RootService, false);
+        return service?.Value;
     }
 
     #endregion

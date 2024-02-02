@@ -43,6 +43,12 @@ public static class ConfigurableOptions
             ?? throw new InvalidOperationException());
     }
     
+    
+    /// <summary>
+    /// 获取配置类名称前缀，作为json搜索的section名
+    /// </summary>
+    /// <param name="optionsType"></param>
+    /// <returns></returns>
     public static string GetConfigurationPath(Type optionsType)
     {
         var endPath = new[] { "Options", "Option" };

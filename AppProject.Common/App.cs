@@ -113,11 +113,45 @@ public class App
         return instance;
     }
 
-    public static TOptions? GetOption<TOptions>(IServiceProvider serviceProvider = null)
+    /// <summary>
+    /// 获取选项 IOptions生命周期为Singleton,无法热更新
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <typeparam name="TOptions"></typeparam>
+    /// <returns></returns>
+    public static TOptions? GetOptions<TOptions>(IServiceProvider serviceProvider = null)
         where TOptions : class, new()
     {
         IOptions<TOptions>? service = GetService<IOptions<TOptions>>(serviceProvider ??
                                                                      App.RootService, false);
+        return service?.Value;
+    }
+
+    /// <summary>
+    /// 获取选项 IOptionsMonitor生命周期为Singleton，支持热更新
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <typeparam name="TOptions"></typeparam>
+    /// <returns></returns>
+    public static TOptions? GetOptionsMonitor<TOptions>(IServiceProvider serviceProvider = null)
+    where TOptions:class,new()
+    {
+        var service = App.GetService<IOptionsMonitor<TOptions>>(serviceProvider ??
+                                                                       App.RootService, false);
+        return service?.CurrentValue;
+    }
+
+    /// <summary>
+    /// 获取选项 IOptionsSnapshot生命周期为scope，每次请求创建新的选项类，并读取最新配置
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <typeparam name="TOptions"></typeparam>
+    /// <returns></returns>
+    public static TOptions? GetOptionsSnapshot<TOptions>(IServiceProvider serviceProvider = null)
+    where TOptions:class,new()
+    {
+        var service = GetService<IOptionsSnapshot<TOptions>>(serviceProvider??
+                                                                     App.RootService,false);
         return service?.Value;
     }
 

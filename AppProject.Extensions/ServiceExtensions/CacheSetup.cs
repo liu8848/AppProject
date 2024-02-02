@@ -15,7 +15,8 @@ public static class CacheSetup
     /// <param name="services"></param>
     public static void AddCacheSetup(this IServiceCollection services)
     {
-        var redisOptions = App.GetOption<RedisOptions>()??throw new ArgumentException(nameof(RedisOptions));
+        var redisOptions = App.GetOptions<RedisOptions>()??throw new ArgumentException(nameof(RedisOptions));
+        // var redisOptions = App.GetOptionsMonitor<RedisOptions>()??throw new ArgumentException(nameof(RedisOptions));
         //是否启用redis
         if (redisOptions.Enable)
         {
@@ -36,6 +37,5 @@ public static class CacheSetup
             });
             services.AddTransient<IRedisBasketRepository, RedisBasketRepository>();
         }
-        
     }
 }

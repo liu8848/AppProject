@@ -33,6 +33,9 @@ builder.ConfigureApplication();
 #region 服务配置
 
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
+builder.Services.AddAllOptionRegister();
+
+builder.Services.AddCacheSetup();   //缓存服务注入
 
 builder.Host.AddSerilogSetup();
 

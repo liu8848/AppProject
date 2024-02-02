@@ -84,7 +84,7 @@ public class RedisBasketRepository:IRedisBasketRepository
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public async Task<string?> GetValue(string key)
+    public async Task<string?> GetValueAsync(string key)
     {
         return await _database.StringGetAsync(key);
     }
@@ -484,6 +484,105 @@ public class RedisBasketRepository:IRedisBasketRepository
     public async Task<long> HashSize(string redisKey, int db = -1)
     {
         return await _database.HashLengthAsync(redisKey);
+    }
+
+    #endregion
+
+    #region Set
+
+    public async Task SetAdd(string key, object value, int db = -1)
+    {
+        if (value is not string valueStr)
+        {
+            valueStr=SerializeHelper.ObjectParseJsonStr(value);
+        }
+
+        await _database.SetAddAsync(key, valueStr);
+    }
+
+    public async Task SetAdd(string key, RedisValue[] values, int db = -1)
+    {
+        await _database.SetAddAsync(key, values);
+    }
+
+    public async Task<bool> SetContains(string key, string value, int db = -1)
+    {
+        return await _database.SetContainsAsync(key, value);
+    }
+
+    public async Task<long> SetSize(string key, int db = -1)
+    {
+        return await _database.SetLengthAsync(key);
+    }
+
+    public async Task<RedisValue[]> SetGet(string key, int db = -1)
+    {
+        return await _database.SetMembersAsync(key);
+    }
+
+    public async Task<List<TEntity>> SetGet<TEntity>(string key, int db = -1)
+    {
+        var entities = new List<TEntity>();
+        var values = await _database.SetMembersAsync(key);
+        foreach (var value in values)
+        {
+            if (value.HasValue)
+            {
+                entities.Add(SerializeHelper.JsonStrParseObject<TEntity>(value));
+            }
+        }
+
+        return entities;
+    }
+
+    public async Task<bool> SetMove(string sourceKey, string destinationKey, string value, int db = -1)
+    {
+        return await _database.SetMoveAsync(sourceKey, destinationKey, value);
+    }
+
+    public async Task<string?> SetPop(string key, int db = -1)
+    {
+        return await _database.SetPopAsync(key);
+    }
+
+    public async Task<TEntity?> SetPop<TEntity>(string key, int db = -1)
+    {
+        var value = await _database.SetPopAsync(key);
+        return value.HasValue ? SerializeHelper.JsonStrParseObject<TEntity>(value) : default(TEntity);
+    }
+
+    public async Task<string?> SetRandomMember(string key, int db = -1)
+    {
+        return await _database.SetRandomMemberAsync(key);
+    }
+
+    public async Task<TEntity?> SetRandomMember<TEntity>(string key, int db = -1)
+    {
+        var value = await _database.SetRandomMemberAsync(key);
+        return value.HasValue ? SerializeHelper.JsonStrParseObject<TEntity>(value) : default(TEntity);
+    }
+
+    public async Task<RedisValue[]> SetRandomMembers(string key, long count, int db = -1)
+    {
+        return await _database.SetRandomMembersAsync(key, count);
+    }
+
+    public async Task<List<TEntity>> SetRandomMembers<TEntity>(string key, long count, int db = -1)
+    {
+        var values = await _database.SetRandomMembersAsync(key, count);
+        var entities = new List<TEntity>();
+        foreach (var value in values)
+        {
+            if (value.HasValue)
+                entities.Add(SerializeHelper.JsonStrParseObject<TEntity>(value));
+        }
+
+        return entities;
+    }
+
+    public async Task SetRemove(string key, string value, int db = -1)
+    {
+        await _database.SetRemoveAsync(key, value);
     }
 
     #endregion

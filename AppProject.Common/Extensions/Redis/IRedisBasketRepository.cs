@@ -13,7 +13,7 @@ public interface IRedisBasketRepository
 
     Task<bool> Remove(string key);
 
-    Task<string?> GetValue(string key);
+    Task<string?> GetValueAsync(string key);
 
     Task Set(string key, object value, TimeSpan cacheTime);
 
@@ -52,6 +52,24 @@ public interface IRedisBasketRepository
     Task<RedisValue[]> HashValues(string redisKey, int db = -1);
     Task<long> HashSize(string redisKey, int db = -1);
 
+    #endregion
+
+    #region Set
+
+    Task SetAdd(string key, object value, int db = -1);
+    Task SetAdd(string key, RedisValue[] values, int db = -1);
+    Task<bool> SetContains(string key, string value,int db = -1);
+    Task<long> SetSize(string key, int db = -1);
+    Task<RedisValue[]> SetGet(string key, int db = -1);
+    Task<List<TEntity>> SetGet<TEntity>(string key, int db = -1);
+    Task<bool> SetMove(string sourceKey, string destinationKey, string value, int db = -1);
+    Task<string?> SetPop(string key, int db = -1);
+    Task<TEntity?> SetPop<TEntity>(string key, int db = -1);
+    Task<string?> SetRandomMember(string key, int db = -1);
+    Task<TEntity?> SetRandomMember<TEntity>(string key, int db = -1);
+    Task<RedisValue[]> SetRandomMembers(string key, long count, int db = -1);
+    Task<List<TEntity>> SetRandomMembers<TEntity>(string key, long count, int db = -1);
+    Task SetRemove(string key, string value, int db = -1);
 
     #endregion
 }

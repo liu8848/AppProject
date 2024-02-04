@@ -1,8 +1,11 @@
 using System.Security.Claims;
 using System.Text;
 using AppProject.Common;
+using AppProject.Common.Helpers.JwtHelpers;
+using AppProject.Common.Option;
 using AppProject.IService.Identities;
 using AppProject.Model.Entities.Identities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -12,13 +15,14 @@ namespace AppProject.Services.Identities;
 public class IdentityService:IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IConfiguration _configuration;
     private ApplicationUser? _applicationUser;
+    private readonly JwtSettingsOptions _jwtSettings;
 
     public IdentityService(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
-        _configuration = App.Configuration;
+        _jwtSettings = App.GetOptionsMonitor<JwtSettingsOptions>() ??
+                       throw new ArgumentNullException(nameof(JwtSettingsOptions));
     }
 
     public async Task<long> CreateUserAsync(string userName, string password)
@@ -37,57 +41,39 @@ public class IdentityService:IIdentityService
 
         var result = _applicationUser != null &&
                      await _userManager.CheckPasswordAsync(_applicationUser, userForAuthentication.Password);
-        // if (!result) throw new Exception("账号密码错误");
         return result;
     }
 
-    /// <summary>
-    /// 生成Token
-    /// </summary>
-    /// <param name="populateExpiry"></param>
-    /// <returns></returns>
-    public async Task<ApplicationToken> CreateTokenAsync(bool populateExpiry)
+
+    public async Task<ApplicationToken> CreateTokenAsync(bool populateExpiry=true)
     {
-        var signingCredentials = GetSigningCredentials();
-        var claims = await GetClaims();
-        return null;
+        var tokenModel = new TokenModelJwt
+        {
+            UserName = _applicationUser.UserName
+        };
+
+        var jwtStr = JwtHelper.GenerateToken(tokenModel);
+        var refreshToken = JwtHelper.GenerateRefreshToken();
+        _applicationUser.RefreshToken = refreshToken;
+        if (populateExpiry)
+            _applicationUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(_jwtSettings.Expires);
+        await _userManager.UpdateAsync(_applicationUser);
+        return new ApplicationToken(jwtStr,refreshToken);
     }
-    
 
 
     public async Task<ApplicationToken> RefreshTokenAsync(ApplicationToken token)
     {
-        throw new NotImplementedException();
-    }
-    
-    
-    /// <summary>
-    /// 获取签署秘钥
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private SigningCredentials GetSigningCredentials()
-    {
-        var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings")["SecretKey"] ??
-                                         "AppProjectApiSecretKey");
-        var secret = new SymmetricSecurityKey(key);
-        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-    }
-    
-    /// <summary>
-    /// 生成Claims
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private async Task<List<Claim>> GetClaims()
-    {
-        var claims = new List<Claim>
+        // var tokenModel = JwtHelper.SerializeJwt(token.AccessToken);
+        var principal = JwtHelper.GetPrincipalFromExpiredToken(token.AccessToken);
+        var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+        if (user == null || user.RefreshToken.Equals(token.RefreshToken) || user.RefreshTokenExpiryTime <= DateTime.Now)
         {
-            new (ClaimTypes.Name,_applicationUser.UserName)
-        };
-        var roles = await _userManager.GetRolesAsync(_applicationUser);
-        claims.AddRange(roles.Select(role=>new Claim(ClaimTypes.Role,role)));
-        return claims;
-    }
+            throw new BadHttpRequestException("无效token，请重新登录");
+        }
 
+        _applicationUser = user;
+        return await CreateTokenAsync(true);
+    }
+    
 }

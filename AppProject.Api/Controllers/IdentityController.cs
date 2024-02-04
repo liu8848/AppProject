@@ -21,13 +21,13 @@ public class IdentityController:ControllerBase
         return await _identityService.CreateUserAsync(userForAuthentication.UserName, userForAuthentication.Password);
     }
 
-    [HttpPost("user/login")]
-    public async Task<IActionResult> Login([FromBody] UserForAuthentication userForAuthentication)
-    {
-        var result = await _identityService.ValidateUserAsync(userForAuthentication);
-        if (!result) return Unauthorized();
-        var token = await _identityService.CreateTokenAsync(true);
-        return Ok();
-    }
+    // [HttpPost("user/login")]
+    // public async Task<IActionResult> Login([FromBody] UserForAuthentication userForAuthentication)
+    // {
+    //     var result = await _identityService.ValidateUserAsync(userForAuthentication);
+    //     if (!result) return Unauthorized();
+    //     var token = await _identityService.CreateTokenAsync(true);
+    //     return Ok();
+    // }
     
 }

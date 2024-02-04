@@ -32,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Helpers\RedisCacheHelper\" />
+      <ProjectReference Include="..\AppProject.Model\AppProject.Model.csproj" />
     </ItemGroup>
 
 </Project>

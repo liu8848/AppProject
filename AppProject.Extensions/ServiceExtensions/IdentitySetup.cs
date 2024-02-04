@@ -1,5 +1,6 @@
 using System.Text;
 using AppProject.Common;
+using AppProject.Common.Option;
 using AppProject.IService.Identities;
 using AppProject.Model.Entities.Identities;
 using AppProject.Repository.Context;
@@ -31,33 +32,7 @@ public static class IdentitySetup
         
         //注入Identity服务
         services.AddTransient<IIdentityService, IdentityService>();
-
-        //配置认证信息
-        var configuration = App.Configuration;
-        services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    
-                    ValidIssuer = configuration.GetSection("JwtSettings")["validIssuer"],
-                    ValidAudience = configuration.GetSection("JwtSettings")["validAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            configuration.GetSection("JwtSettings")["SecretKey"]??
-                            "AppProjectApiSecretKey")
-                        )
-                };
-            });
-
+        
         return services;
     }
 }

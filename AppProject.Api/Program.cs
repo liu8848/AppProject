@@ -1,6 +1,7 @@
 using AppProject.Common.Core;
 using AppProject.Common.Helpers;
 using AppProject.Extensions.ServiceExtensions;
+using AppProject.Extensions.ServiceExtensions.Authentications;
 using AppProject.IService.Identities;
 using AppProject.Model.Entities.Identities;
 using AppProject.Repository;
@@ -20,7 +21,7 @@ builder.Host
     {
         hostingContext.Configuration.ConfigureApplication();
         config.Sources.Clear();
-        config.AddJsonFile("appsettings.json", true, false);
+        config.AddJsonFile("appsettings.json", optional:true, reloadOnChange:true);
     })
     .ConfigureContainer<ContainerBuilder>(containerBuilder =>
     {
@@ -40,6 +41,7 @@ builder.Services.AddCacheSetup();   //缓存服务注入
 builder.Host.AddSerilogSetup();
 
 builder.Services.AddIdentityExtension();
+builder.Services.AddAuthenticationJwtSetup();
 
 builder.Services.AddControllers();
 

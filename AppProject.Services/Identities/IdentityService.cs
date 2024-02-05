@@ -64,7 +64,6 @@ public class IdentityService:IIdentityService
 
     public async Task<ApplicationToken> RefreshTokenAsync(ApplicationToken token)
     {
-        // var tokenModel = JwtHelper.SerializeJwt(token.AccessToken);
         var principal = JwtHelper.GetPrincipalFromExpiredToken(token.AccessToken);
         var user = await _userManager.FindByNameAsync(principal.Identity.Name);
         if (user == null || user.RefreshToken.Equals(token.RefreshToken) || user.RefreshTokenExpiryTime <= DateTime.Now)

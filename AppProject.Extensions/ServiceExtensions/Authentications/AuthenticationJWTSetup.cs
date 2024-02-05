@@ -20,7 +20,7 @@ public static class AuthenticationJwtSetup
                           throw new ArgumentNullException(nameof(JwtSettingsOptions));
 
         var secretKey = jwtSettings.SecretKey;
-        var keyByteArray = Encoding.ASCII.GetBytes(secretKey);
+        var keyByteArray = Encoding.UTF8.GetBytes(secretKey);
         var signingKey = new SymmetricSecurityKey(keyByteArray);
         var issuer = jwtSettings.ValidIssuer;
         var audience = jwtSettings.ValidAudience;
@@ -47,7 +47,6 @@ public static class AuthenticationJwtSetup
             o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             o.DefaultChallengeScheme = nameof(ApiResponseHandler);
             o.DefaultForbidScheme = nameof(ApiResponseHandler);
-            // o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })//添加JwtBearer服务
         .AddJwtBearer(o =>
         {

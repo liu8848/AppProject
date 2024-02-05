@@ -1,5 +1,6 @@
 using AppProject.IService.Identities;
 using AppProject.Model.Entities.Identities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppProject.Api.Controllers;
@@ -9,6 +10,7 @@ namespace AppProject.Api.Controllers;
 public class IdentityController:ControllerBase
 {
     private readonly IIdentityService _identityService;
+
 
     public IdentityController(IIdentityService identityService)
     {
@@ -20,14 +22,4 @@ public class IdentityController:ControllerBase
     {
         return await _identityService.CreateUserAsync(userForAuthentication.UserName, userForAuthentication.Password);
     }
-
-    // [HttpPost("user/login")]
-    // public async Task<IActionResult> Login([FromBody] UserForAuthentication userForAuthentication)
-    // {
-    //     var result = await _identityService.ValidateUserAsync(userForAuthentication);
-    //     if (!result) return Unauthorized();
-    //     var token = await _identityService.CreateTokenAsync(true);
-    //     return Ok();
-    // }
-    
 }

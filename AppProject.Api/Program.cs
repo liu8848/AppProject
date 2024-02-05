@@ -2,14 +2,10 @@ using AppProject.Common.Core;
 using AppProject.Common.Helpers;
 using AppProject.Extensions.ServiceExtensions;
 using AppProject.Extensions.ServiceExtensions.Authentications;
-using AppProject.IService.Identities;
-using AppProject.Model.Entities.Identities;
+using AppProject.Extensions.ServiceExtensions.Authorizations;
 using AppProject.Repository;
-using AppProject.Repository.Context;
-using AppProject.Services.Identities;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,14 +30,18 @@ builder.ConfigureApplication();
 #region 服务配置
 
 builder.Services.AddSingleton(new AppSettings(builder.Configuration));
-builder.Services.AddAllOptionRegister();
+builder.Services.AddAllOptionRegister();    //配置文件注入
 
 builder.Services.AddCacheSetup();   //缓存服务注入
 
-builder.Host.AddSerilogSetup();
+builder.Host.AddSerilogSetup();     //日志配置
 
-builder.Services.AddIdentityExtension();
-builder.Services.AddAuthenticationJwtSetup();
+builder.Services.AddIdentityExtension();    //权限管理注入
+builder.Services.AddHttpContextSetUp();     //请求处理相关类注入
+
+builder.Services.AddAuthenticationJwtSetup();       //JWT注入
+builder.Services.AddAuthorizationSetup();
+
 
 builder.Services.AddControllers();
 
@@ -62,6 +62,9 @@ if (app.Environment.IsDevelopment())
 }
 
 await app.MigrateDatabase();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 

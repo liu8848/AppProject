@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using AppProject.Common.Constants;
 using AppProject.Common.HttpContextUser;
-using AppProject.IService.Identities;
 using AppProject.Model;
 using AppProject.Model.Entities.Identities;
 using Microsoft.AspNetCore.Authentication;
@@ -9,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace AppProject.Extensions.ServiceExtensions.Authorizations.Policys;
 

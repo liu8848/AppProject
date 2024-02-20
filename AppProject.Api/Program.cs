@@ -39,8 +39,10 @@ builder.Host.AddSerilogSetup();     //日志配置
 builder.Services.AddIdentityExtension();    //权限管理注入
 builder.Services.AddHttpContextSetUp();     //请求处理相关类注入
 
-builder.Services.AddAuthenticationJwtSetup();       //JWT注入
 builder.Services.AddAuthorizationSetup();
+builder.Services.AddAuthenticationJwtSetup();       //JWT注入
+
+
 
 
 builder.Services.AddControllers();

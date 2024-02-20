@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text;
 using AppProject.Common;
 using AppProject.Common.Helpers.JwtHelpers;
 using AppProject.Common.Option;
@@ -7,8 +5,6 @@ using AppProject.IService.Identities;
 using AppProject.Model.Entities.Identities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AppProject.Services.Identities;
 
@@ -66,10 +62,11 @@ public class IdentityService:IIdentityService
     {
         var principal = JwtHelper.GetPrincipalFromExpiredToken(token.AccessToken);
         var user = await _userManager.FindByNameAsync(principal.Identity.Name);
-        if (user == null || user.RefreshToken.Equals(token.RefreshToken) || user.RefreshTokenExpiryTime <= DateTime.Now)
+        if (user == null || !user.RefreshToken.Equals(token.RefreshToken)||user.RefreshTokenExpiryTime <= DateTime.Now)
         {
             throw new BadHttpRequestException("无效token，请重新登录");
         }
+        
 
         _applicationUser = user;
         return await CreateTokenAsync(true);

@@ -31,6 +31,7 @@ public static class AuthorizationSetup
                 policy => policy.RequireRole(RoleConstant.ADMIN, RoleConstant.SYETEM, RoleConstant.OTHER));
         });
 
+        //读取配置参数
         var jwtSettings = App.GetOptionsMonitor<JwtSettingsOptions>()??throw new ArgumentNullException(nameof(JwtSettingsOptions));
         var secretKey = jwtSettings.SecretKey;
         var keyByteArray = Encoding.UTF8.GetBytes(secretKey);

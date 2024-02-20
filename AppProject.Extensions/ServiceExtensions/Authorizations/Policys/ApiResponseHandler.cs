@@ -12,12 +12,17 @@ namespace AppProject.Extensions.ServiceExtensions.Authorizations.Policys;
 public class ApiResponseHandler:AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IUser _user;
-    public ApiResponseHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, 
-        UrlEncoder encoder, ISystemClock clock,IUser user) 
+    public ApiResponseHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger, 
+        UrlEncoder encoder, 
+        ISystemClock clock,
+        IUser user) 
         : base(options, logger, encoder, clock)
     {
         _user = user;
     }
+
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         throw new NotImplementedException();

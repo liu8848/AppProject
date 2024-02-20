@@ -43,64 +43,66 @@ public static class AuthenticationJwtSetup
         
         //开启Bearer认证
         services.AddAuthentication(o =>
-        {
-            o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            o.DefaultChallengeScheme = nameof(ApiResponseHandler);
-            o.DefaultForbidScheme = nameof(ApiResponseHandler);
-        })//添加JwtBearer服务
-        .AddJwtBearer(o =>
-        {
-            o.TokenValidationParameters = tokenValidationParameters;
-            o.Events = new JwtBearerEvents
             {
-                OnMessageReceived = context =>
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = nameof(ApiResponseHandler);
+                o.DefaultForbidScheme = nameof(ApiResponseHandler);
+            }) //添加JwtBearer服务
+            .AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters = tokenValidationParameters;
+                o.Events = new JwtBearerEvents
                 {
-                    var accessToken = context.Request.Query["access_token"];
-                    var path = context.HttpContext.Request.Path;
-                    if (!string.IsNullOrEmpty(accessToken) &&
-                        (path.StartsWithSegments("")))
+                    OnMessageReceived = context =>
                     {
-                        // Read the token out of the query string
-                        context.Token = accessToken;
-                    }
-
-                    return Task.CompletedTask;
-                },
-                OnChallenge = context =>
-                {
-                    context.Response.Headers["Token-Error"] = context.ErrorDescription;
-                    return Task.CompletedTask;
-                },
-                OnAuthenticationFailed = context =>
-                {
-                    var jwtHandler = new JwtSecurityTokenHandler();
-                    var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
-                    if (token.IsNullOrEmpty() && jwtHandler.CanReadToken(token))
-                    {
-                        var jwtToken = jwtHandler.ReadJwtToken(token);
-
-                        if (jwtToken.Issuer != issuer)
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken))
                         {
-                            context.Response.Headers["Token-Error-Iss"] = "issuer is wrong!";
+                            // Read the token out of the query string
+                            context.Token = accessToken;
                         }
 
-                        if (jwtToken.Audiences.FirstOrDefault() != audience)
-                        {
-                            context.Response.Headers["Token-Error-Aud"] = "Audience is wrong!";
-                        }
-                    }
-
-                    // 如果过期，则把<是否过期>添加到，返回头信息中
-                    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
                     {
-                        context.Response.Headers["Token-Expired"] = "true";
-                    }
+                        context.Response.Headers["Token-Error"] = context.ErrorDescription;
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        var jwtHandler = new JwtSecurityTokenHandler();
+                        var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-                    return Task.CompletedTask;
-                }
-            };
-        })
-        .AddScheme<AuthenticationSchemeOptions,ApiResponseHandler>(nameof(ApiResponseHandler), o => { });
+                        if (token.IsNullOrEmpty() && jwtHandler.CanReadToken(token))
+                        {
+                            var jwtToken = jwtHandler.ReadJwtToken(token);
+
+                            if (jwtToken.Issuer != issuer)
+                            {
+                                context.Response.Headers["Token-Error-Iss"] = "issuer is wrong!";
+                            }
+
+                            if (jwtToken.Audiences.FirstOrDefault() != audience)
+                            {
+                                context.Response.Headers["Token-Error-Aud"] = "Audience is wrong!";
+                            }
+                        }
+
+                        // 如果过期，则把<是否过期>添加到，返回头信息中
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers["Token-Expired"] = "true";
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            })
+        .AddScheme<AuthenticationSchemeOptions,ApiResponseHandler>(nameof(ApiResponseHandler), 
+                o => { });
+
     }
 }

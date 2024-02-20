@@ -1,10 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using AppProject.Common.Helpers.JwtHelpers;
 using AppProject.IService.Identities;
 using AppProject.Model;
 using AppProject.Model.Entities.Identities;
 using AppProject.Model.Responses;
-using AppProject.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppProject.Api.Controllers;

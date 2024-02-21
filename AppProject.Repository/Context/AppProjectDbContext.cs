@@ -1,4 +1,5 @@
 using AppProject.Model;
+using AppProject.Model.Attributes;
 using AppProject.Model.Entities.Identities;
 using AppProject.Repository.Interceptors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -13,8 +14,6 @@ public class AppProjectDbContext : IdentityDbContext<ApplicationUser,Application
     }
 
     #region 实体映射表
-
-    public DbSet<TestModel> TestModels => Set<TestModel>();
     
     #endregion
 
@@ -22,6 +21,9 @@ public class AppProjectDbContext : IdentityDbContext<ApplicationUser,Application
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        var mappedEntities = GetAllMappedEntities();
+        mappedEntities.ForEach(t=>modelBuilder.Entity(t));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -48,5 +50,22 @@ public class AppProjectDbContext : IdentityDbContext<ApplicationUser,Application
 
         var result = await base.SaveChangesAsync(cancellationToken);
         return result;
+    }
+
+
+    /// <summary>
+    /// 获取所有映射实体类型
+    /// </summary>
+    /// <returns></returns>
+    private List<Type> GetAllMappedEntities()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+
+        var types = assemblies.SelectMany(t=>t.GetTypes())
+            .Where(t=>
+                t.GetCustomAttributes(typeof(TableEntityAttribute),inherit:false).Length>0
+                &&t.IsClass&&!t.IsAbstract)
+            .ToList();
+        return types;
     }
 }

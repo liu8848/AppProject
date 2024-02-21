@@ -16,4 +16,8 @@
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Entities\Common\" />
+    </ItemGroup>
+
 </Project>

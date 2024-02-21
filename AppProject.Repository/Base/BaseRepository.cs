@@ -44,6 +44,8 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<List<TEntity>> GetList(Expression<Func<TEntity, bool>> condition)
     {
+        if (condition is null)
+            return await _dbSet.AsNoTracking().ToListAsync();
         return await _dbSet.AsNoTracking().Where(condition).ToListAsync();
     }
 

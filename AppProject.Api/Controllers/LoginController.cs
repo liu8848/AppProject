@@ -29,14 +29,6 @@ public class LoginController:ControllerBase
         {
             throw new Exception("账户名或密码错误");
         }
-        // var userInfo = await _identityService.GetUserInfo(userForAuthentication.UserName);
-        //
-        // var tokenModel = new TokenModelJwt
-        // {
-        //     UserName = userInfo.UserName
-        // };
-        //
-        // jwtStr = JwtHelper.IssueJwt(tokenModel);
 
         ApplicationToken token = await _identityService.CreateTokenAsync(true);
         

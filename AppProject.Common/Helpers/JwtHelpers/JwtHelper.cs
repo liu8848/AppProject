@@ -36,6 +36,8 @@ public class JwtHelper
             new (JwtRegisteredClaimNames.Iss,iss),
             new (JwtRegisteredClaimNames.Aud,aud)
         };
+
+        claims.AddRange(tokenModel.Roles.Select(s=>new Claim(ClaimTypes.Role,s)));
         
         //秘钥
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
@@ -115,4 +117,6 @@ public class JwtHelper
 public class TokenModelJwt
 {
     public string UserName { get; set; }
+    
+    public List<string> Roles { get; set; }
 }

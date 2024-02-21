@@ -11,12 +11,14 @@ namespace AppProject.Services.Identities;
 public class IdentityService:IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private ApplicationUser? _applicationUser;
     private readonly JwtSettingsOptions _jwtSettings;
 
-    public IdentityService(UserManager<ApplicationUser> userManager)
+    public IdentityService(UserManager<ApplicationUser> userManager,RoleManager<ApplicationRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         _jwtSettings = App.GetOptionsMonitor<JwtSettingsOptions>() ??
                        throw new ArgumentNullException(nameof(JwtSettingsOptions));
     }
@@ -47,6 +49,9 @@ public class IdentityService:IIdentityService
         {
             UserName = _applicationUser.UserName
         };
+
+        var roles = await _userManager.GetRolesAsync(_applicationUser);
+        tokenModel.Roles = roles.ToList();
 
         var jwtStr = JwtHelper.GenerateToken(tokenModel);
         var refreshToken = JwtHelper.GenerateRefreshToken();
